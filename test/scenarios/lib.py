@@ -82,6 +82,9 @@ def run_tests(extra_tests):
         log_has_string("lightning-loop", "chain notifier RPC isstill in the process of starting")
     )
 
+    assert_matches("su operator -c 'frcli --version'", "version")
+    machine.wait_until_succeeds(log_has_string("faraday", "gRPC server listening on"))
+
     assert_running("spark-wallet")
     extra_tests.pop("spark-wallet")()
 
