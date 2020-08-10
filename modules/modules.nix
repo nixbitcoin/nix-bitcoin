@@ -14,6 +14,7 @@
     ./hardware-wallets.nix
     ./lnd.nix
     ./lightning-loop.nix
+    ./faraday.nix
     ./secrets/secrets.nix
     ./netns-isolation.nix
     ./dbus.nix

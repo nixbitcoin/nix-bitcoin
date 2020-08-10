@@ -130,6 +130,10 @@ in {
         id = 22;
         connections = [ "lnd" ];
       };
+      faraday = {
+        id = 23;
+        connections = [ "lnd" ];
+      };
     };
 
     systemd.services = {
@@ -300,6 +304,15 @@ in {
       # Switch user because lnd makes datadir contents readable by user only
       ''
         netns-exec nb-lightning-loop sudo -u lnd ${config.services.lightning-loop.package}/bin/loop "$@"
+      '';
+    };
+    # faraday: Custom netns configs
+    services.faraday = mkIf config.services.faraday.enable {
+      rpclisten = "${netns.faraday.address}:8465";
+      cli = pkgs.writeScriptBin "frcli"
+      # Switch user because lnd makes datadir contents readable by user only
+      ''
+        netns-exec nb-faraday sudo -u lnd ${config.services.faraday.package}/bin/frcli --rpcserver ${config.services.faraday.rpclisten} "$@"
       '';
     };
   };
