@@ -13,7 +13,8 @@ in
     lnd;
   inherit (nixBitcoinPkgsUnstable)
     electrs
-    lightning-loop;
+    lightning-loop
+    faraday;
 
   stable = nixBitcoinPkgsStable;
   unstable = nixBitcoinPkgsUnstable;

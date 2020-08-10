@@ -12,6 +12,7 @@
   nixops19_09 = pkgs.callPackage ./nixops { };
   netns-exec = pkgs.callPackage ./netns-exec { };
   lightning-loop = pkgs.callPackage ./lightning-loop { };
+  faraday = pkgs.callPackage ./faraday { };
 
   pinned = import ./pinned.nix;
 }
