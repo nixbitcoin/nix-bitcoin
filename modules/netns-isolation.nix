@@ -300,10 +300,12 @@ in {
 
     # loop: Custom netns configs
     services.lightning-loop = mkIf config.services.lightning-loop.enable {
+      rpclisten = "${netns.lightning-loop.address}:11010";
+      restlisten = "${netns.lightning-loop.address}:8081";
       cli = pkgs.writeScriptBin "loop"
       # Switch user because lnd makes datadir contents readable by user only
       ''
-        netns-exec nb-lightning-loop sudo -u lnd ${config.services.lightning-loop.package}/bin/loop "$@"
+        netns-exec nb-lightning-loop sudo -u lnd ${config.services.lightning-loop.package}/bin/loop --rpcserver ${config.services.lightning-loop.rpclisten} "$@"
       '';
     };
     # faraday: Custom netns configs

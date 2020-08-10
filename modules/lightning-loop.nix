@@ -16,6 +16,16 @@ in {
       defaultText = "pkgs.nix-bitcoin.lightning-loop";
       description = "The package providing lightning-loop binaries.";
     };
+    rpclisten = mkOption {
+      type = types.str;
+      default = "localhost:11010";
+      description = "Address to listen on for gRPC clients";
+    };
+    restlisten = mkOption {
+      type = types.str;
+      default = "localhost:8081";
+      description = "Address to listen on for REST clients";
+    };
     proxy = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -30,7 +40,7 @@ in {
       default = pkgs.writeScriptBin "loop"
       # Switch user because lnd makes datadir contents readable by user only
       ''
-        exec sudo -u lnd ${cfg.package}/bin/loop "$@"
+        exec sudo -u lnd ${cfg.package}/bin/loop --rpcserver ${cfg.rpclisten} "$@"
       '';
       description = "Binary to connect with the lnd instance.";
     };
@@ -54,6 +64,8 @@ in {
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         ExecStart = ''
           ${cfg.package}/bin/loopd \
+          --rpclisten=${cfg.rpclisten} \
+          --restlisten=${cfg.restlisten} \
           --lnd.host=${config.services.lnd.listen}:10009 \
           --lnd.macaroondir=${config.services.lnd.dataDir}/chain/bitcoin/mainnet \
           --lnd.tlspath=${secretsDir}/lnd-cert \
