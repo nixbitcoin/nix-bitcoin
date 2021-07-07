@@ -27,10 +27,10 @@ let
     rpc_port = ${toString bitcoind.rpc.port}
     rpc_user = ${bitcoind.rpc.users.privileged.name}
     @@RPC_PASSWORD@@
-    ${optionalString (cfg.rpcWalletFile != null) "rpc_wallet_file=${cfg.rpcWalletFile}"}
+    ${optionalString (cfg.rpcWalletFile != null) "rpc_wallet_file = ${cfg.rpcWalletFile}"}
 
     [MESSAGING:server1]
-    host = darksci3bfoka7tw.onion
+    host = darkirc6tqgpnwd3blln3yfv5ckl47eg7llfxkmtovrv7c7iwohhb6ad.onion
     channel = joinmarket-pit
     port = 6697
     usessl = true
@@ -129,7 +129,7 @@ in {
     };
     rpcWalletFile = mkOption {
       type = types.nullOr types.str;
-      default = null;
+      default = "jm_wallet";
       description = ''
         Name of the watch-only bitcoind wallet the JoinMarket addresses are imported to.
       '';
@@ -232,7 +232,7 @@ in {
       requires = [ "bitcoind.service" ];
       after = [ "bitcoind.service" ];
       serviceConfig = nbLib.defaultHardening // {
-        ExecStartPre = nbLib.privileged "joinmarket-create-config" ''
+        ExecStartPre = nbLib.script "joinmarket-create-config" ''
           install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
           sed -i \
              "s|@@RPC_PASSWORD@@|rpc_password = $(cat ${secretsDir}/bitcoin-rpcpassword-privileged)|" \
@@ -244,7 +244,11 @@ in {
             walletname=wallet.jmdat
             wallet=${cfg.dataDir}/wallets/$walletname
             if [[ ! -f $wallet ]]; then
-              echo "Create wallet"
+              ${optionalString (cfg.rpcWalletFile != null) ''
+                echo "Create wallet"
+                ${config.services.bitcoind.cli}/bin/bitcoin-cli \
+                   createwallet "${cfg.rpcWalletFile}"
+              ''}
               pw=$(cat "${secretsDir}"/jm-wallet-password)
               cd ${cfg.dataDir}
               if ! ${nbPkgs.joinmarket}/bin/jm-genwallet --datadir=${cfg.dataDir} $walletname $pw \
@@ -270,7 +274,7 @@ in {
       group = cfg.group;
       home = cfg.dataDir;
       # Allow access to the tor control socket, needed for payjoin onion service creation
-      extraGroups = [ "tor" ];
+      extraGroups = [ "tor" "bitcoin" ];
     };
     users.groups.${cfg.group} = {};
     nix-bitcoin.operator = {

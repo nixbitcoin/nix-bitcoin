@@ -91,6 +91,21 @@ let
           rm -f "${secretsDir}"/{lnd-seed-mnemonic,jm-wallet-seed}
       '';
     }
+    {
+      version = "0.0.48";
+      condition = config.services.joinmarket.enable;
+      message = ''
+        Starting with 0.21.0, [bitcoind no longer automatically creates and loads a
+        default wallet](bitcoin/bitcoin#15454). Therefore it is necessary to manually
+        create a wallet with bitcoind. If you ran bitcoind & JoinMarket before Bitcoin
+        0.21.0, you likely already have a wallet file named `wallet.dat` that JoinMarket
+        is using.
+
+        If you want to continue using this wallet file like before, add the following to
+        your configuration:
+        services.joinmarket.rpcWalletFile = null;
+      '';
+    }
   ];
 
   incompatibleChanges = optionals
