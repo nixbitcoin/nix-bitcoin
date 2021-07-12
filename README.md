@@ -65,7 +65,7 @@ NixOS modules
   * [lnd](https://github.com/lightningnetwork/lnd) with support for announcing an onion service
     * [Lightning Loop](https://github.com/lightninglabs/loop)
     * [Lightning Pool](https://github.com/lightninglabs/pool)
-    * [charge-lnd](https://github.com/accumulator/charge-lnd): Policy-based channel fee manager
+    * [charge-lnd](https://github.com/accumulator/charge-lnd): policy-based channel fee manager
     * [lndconnect](https://github.com/LN-Zap/lndconnect) via a REST onion service
   * [spark-wallet](https://github.com/shesek/spark-wallet)
   * [electrs](https://github.com/romanz/electrs)
