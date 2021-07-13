@@ -9,8 +9,7 @@ let
   secretsDir = config.nix-bitcoin.secretsDir;
   pidFile = "${cfg.dataDir}/liquidd.pid";
   configFile = pkgs.writeText "elements.conf" ''
-    chain=liquidv1
-    ${optionalString cfg.testnet "testnet=1"}
+    chain=${config.services.bitcoind.makeNetworkName "liquidv1" "regtest \n[regtest]"}
     ${optionalString (cfg.dbCache != null) "dbcache=${toString cfg.dbCache}"}
     ${optionalString (cfg.prune != null) "prune=${toString cfg.prune}"}
     ${optionalString (cfg.validatepegin != null) "validatepegin=${if cfg.validatepegin then "1" else "0"}"}
@@ -139,11 +138,6 @@ in {
           type = types.str;
           default = "liquidrpc";
           description = "Username for JSON-RPC connections";
-      };
-      testnet = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Whether to use the test chain.";
       };
       proxy = mkOption {
         type = types.nullOr types.str;
