@@ -11,8 +11,8 @@ in
     rev = "359e6542e1d41eb18df55c82bdb08bf738fae2cf";
     sha256 = "05v28njaas9l26ibc6vy6imvy7grbkli32bmv0n32x6x9cf68gf9";
   };
-  nixpkgs-unstable = fetch {
-    rev = "036dc0c709650e0c833822307af801f576d67273";
-    sha256 = "0pnrygs6xf7id63zi17pq5379hfppwbb5cfazhypcqz6l3dfk00g";
+  nixpkgs-unstable = builtins.fetchTarball {
+    url = "https://github.com/nixbitcoin/nixpkgs/archive/e8135bdc7f26125e072186c66ae0c27fe35ffdae.tar.gz";
+    sha256 = "05irab32svmfsdlfy1810m6q36fdk2kfh7ipm9ir85csic5rvcjq";
   };
 }
